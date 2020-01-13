@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>
+        Employee Registry
+    </title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+
+
+
+    <div class="container">
+        <h1 class="display-4"><b>Employee Registry </b> </h1>
+        <br />
+        <div class="container">
+
+            <form id="EmployeeData">
+                <div class="form-group row">
+                    <label for="inputName" class="col-sm-2 col-form-label">Employee Name</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="employeeName" placeholder="Jane Doe" required>
+                        <div class="valid-feedback" id="nameDiv"> </div>
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <label for="inputPassword" class="col-sm-2 col-form-label">Employee ID</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="employeeID" placeholder="429126346" required>
+                        <div class="valid-feedback" id="idDiv"> </div>
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <label for="inputDepartment" class="col-sm-2 col-form-label">Department</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="employeeDepartment" placeholder="sales" required>
+                        <div class="valid-feedback" id="depDiv"> </div>
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <label for="inputBonus" class="col-sm-2 col-form-label">Bonus</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="employeeBonus" placeholder="250000" value="250000" readonly required>
+                        <div class="valid-feedback" id="bonusDiv"> </div>
+                    </div>
+
+                </div>
+                <input type="submit" id="submit" value="Submit Form" class="btn btn-primary">
+                <!--                <input type="submit" value="Submit Form">-->
+            </form>
+        </div>
+
+        <br />
+
+        <div class="container">
+            <table class="table" id="empTable">
+                <thead>
+                    <tr>
+                        <th scope="col">Employee Name</th>
+                        <th scope="col">Employee ID</th>
+                        <th scope="col">Department</th>
+                        <th scope="col">Bonus</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!--
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                </tr>
+                <tr>
+                    <th scope="row">2</th>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td>Larry</td>
+                    <td>the Bird</td>
+                    <td>@twitter</td>
+                </tr>
+-->
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+        
+        //assuming that user has input wrong value, will be true if user enter correct data
+        var validName = false;
+        var validaID = false;
+        var validDept = false;
+        var validaBonus = false;
+
+        $('#employeeName').keyup(function() { //function for employee name keyup
+
+            var getName = $('#employeeName').val(); //value of employee name text box
+            validName = false; //assuming that user has input wrong value, will be true if user enter correct data
+            
+            //sending data to parta.php for validation 
+            $.post('parta.php', { 
+                    act: 'validateName',
+                    name: getName
+                },
+
+                function(data) { //data - recieved jason data form php file
+
+                    //console.log(data.err + " and " + data.msg);
+
+                    if (data.err == 0) {
+                        //empty text box
+
+                        $('#employeeName').removeClass().addClass("form-control");
+                        //$('#nameDiv').html("<em> Please Enter Employee Name.</em>").removeClass();
+
+                    } else if (data.err == 1) {
+                        // if employee name text box contains numbers
+
+                        $('#employeeName').removeClass().addClass("form-control is-invalid");
+                        $('#nameDiv').html("<strong>Error:</strong> <em> Employee name cannot contain digits.</em>").removeClass().addClass("invalid-feedback");
+
+                    } else if (data.err == 2) {
+                        //if string is less than 5 OR greater than 20 
+
+                        $('#employeeName').removeClass().addClass("form-control is-invalid");
+                        $('#nameDiv').html("<strong>Error:</strong> <em> Employee name must be between 5-20 characters in length.. </em>").removeClass().addClass("invalid-feedback");
+
+                    } else {
+                        //valid data
+                        console.log("success");
+                        validName = true;
+                        $('#employeeName').removeClass().addClass("form-control is-valid");
+                        $('#nameDiv').html("<strong> Sucess :</strong> <em> Valid Employee Name</em>").removeClass().addClass("valid-feedback");
+                    }
+
+                }, 'json');
+
+
+        }); // end of keyup
+
+        $('#employeeID').keyup(function() { //function for employee ID keyup
+
+            var getID = $('#employeeID').val(); //value of employee ID text box
+            validaID = false; //assuming that user has input wrong value, will be true if user enter correct data
+
+            $.post('parta.php', {
+                    act: 'validateID',
+                    id: getID
+                },
+
+                function(data) {
+
+                    //console.log(data.err + " and " + data.msg);
+
+                    if (data.err == 0) {
+                        //empty text box
+                        console.log("inside 0");
+                        $('#employeeID').removeClass().addClass("form-control");
+                        //                        $('#idDiv').html("<em> Please Enter Employee ID.</em>").removeClass();
+
+                    } else if (data.err == 1) {
+                        //contains anything except numbers
+                        $('#employeeID').removeClass().addClass("form-control is-invalid");
+                        $('#idDiv').html("<strong>Error:</strong> <em> Employee ID must only contain digits.</em>").removeClass().addClass("invalid-feedback");
+
+                    } else if (data.err == 2) {
+                        //lenght is not 9
+                        $('#employeeID').removeClass().addClass("form-control is-invalid");
+                        $('#idDiv').html("<strong>Error:</strong> <em> Employee ID must be 9 digits in length.</em>").removeClass().addClass("invalid-feedback");
+
+                    } else {
+                        //valid data
+                        console.log("success");
+                        validaID = true;
+                        $('#employeeID').removeClass().addClass("form-control is-valid");
+                        $('#idDiv').html("<strong> Sucess :</strong> <em> Valid Employee ID</em>").removeClass().addClass("valid-feedback");
+                    }
+
+                }, 'json');
+
+
+        }); // end of keyup
+
+
+        $('#employeeDepartment').keyup(function() {
+
+            var getDept = $('#employeeDepartment').val();
+            validDept = false;
+            $('#employeeBonus').removeClass().addClass("form-control");
+
+            $.post('parta.php', {
+                    act: 'validateDept',
+                    dept: getDept
+                },
+
+                function(data) {
+
+                    //console.log(data.err + " and " + data.msg);
+                    document.getElementById("employeeBonus").readOnly = true;
+                    document.getElementById("employeeBonus").value = 250000;
+
+                    $('#bonusDiv').html(" ").removeClass();
+
+                    if (data.err == 0) {
+                        //empty text box
+                        //console.log("inside 0");
+                        $('#employeeDepartment').removeClass().addClass("form-control");
+
+                    } else if (data.err == 1) {
+                        //Advertising is present 
+                        $('#employeeDepartment').removeClass().addClass("form-control is-invalid");
+                        $('#depDiv').html("<strong>Error:</strong> <em> Advertising is not a valid department. </em>").removeClass().addClass("invalid-feedback");
+
+                    } else if (data.err == 2) {
+                        //sales is present 
+                        validDept = true;
+                        validaBonus = true;
+                        document.getElementById("employeeBonus").readOnly = false;
+                        $('#employeeBonus').removeClass().addClass("form-control is-valid");
+                        //                        $('#bonusDiv').html("<em> please enter Employee bonus Amount.</em>")
+
+
+                    } else {
+                        //valid data
+                        validDept = true;
+                        validaBonus = true;
+                        $('#employeeDepartment').removeClass().addClass("form-control is-valid");
+                    }
+
+                }, 'json');
+
+
+        }); // end of keyup
+
+        $('#employeeBonus').keyup(function() {
+
+            var getBonus = $('#employeeBonus').val();
+
+
+            $.post('parta.php', {
+                    act: 'validateBonus',
+                    bonus: getBonus
+                },
+
+                function(data) {
+
+                    //console.log(data.err + " and " + data.msg);
+
+                    if (data.err == 0) {
+                        //empty text box
+                        validaBonus = false;
+                        $('#employeeBonus').removeClass().addClass("form-control");
+                        //$('#bonusDiv').html("<em> please enter Employee bonus Amount.</em>").removeClass();
+
+                    } else if (data.err == 1) {
+                        validaBonus = false;
+                        $('#employeeBonus').removeClass().addClass("form-control is-invalid");
+                        $('#bonusDiv').html("<strong>Error:</strong> <em> Employee Bonus must only contain digits </em>").removeClass().addClass("invalid-feedback");
+
+                    } else if (document.getElementById("employeeBonus").readOnly == false || getBonus == 0) {
+                        //valid data
+                        validaBonus = true;
+                        $('#employeeBonus').removeClass().addClass("form-control is-valid");
+                    }
+
+                }, 'json');
+
+
+        }); // end of keyup
+
+        //submit form
+        $("#EmployeeData").submit(function() {
+
+            console.log(validName + " " + validaID + " " + validDept + " " + validaBonus)
+
+            if (validName && validaID && validDept && validaBonus) {
+                var table = document.getElementById("empTable");
+                var row = table.insertRow(-1);
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                var cell3 = row.insertCell(2);
+                var cell4 = row.insertCell(3);
+                var deptvalue = document.getElementById("employeeDepartment").value;
+                var bonusValue = document.getElementById("employeeBonus").value;
+
+                cell4.innerHTML = "NEW CELL4";
+                cell1.innerHTML = document.getElementById("employeeName").value;
+                cell2.innerHTML = document.getElementById("employeeID").value;
+                cell3.innerHTML = deptvalue;
+
+
+                if (deptvalue == "Sales") {
+                    cell4.innerHTML = bonusValue;
+                    $(row).addClass("table-primary");
+                } else if (deptvalue == "HR") {
+                    cell4.innerHTML = "N/A";
+                    $(row).addClass("table-warning");
+                } else {
+                    cell4.innerHTML = "N/A";
+
+                }
+                
+                
+                document.getElementById("employeeName").value = "";
+                document.getElementById("employeeID").value = "";
+                document.getElementById("employeeDepartment").value = "";
+                document.getElementById("employeeBonus").value = "250000";
+                
+                //$("#employeeBonus").readOnly == true;
+                document.getElementById("employeeBonus").readOnly = true;
+                
+                $('#employeeName').removeClass().addClass("form-control");
+                $('#employeeID').removeClass().addClass("form-control");
+                $('#employeeDepartment').removeClass().addClass("form-control");
+                $('#employeeBonus').removeClass().addClass("form-control");
+                
+                
+                
+                
+            }
+
+            return false;
+        });
+
+    </script>
+
+
+</body>
+
+</html>
